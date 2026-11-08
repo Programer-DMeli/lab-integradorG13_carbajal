@@ -23,7 +23,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             RickandmortyTheme {
                 Scaffold { padding -> Box(Modifier.padding(padding)) {
-                    ListaScreen(vm.estado.collectAsStateWithLifecycle().value, vm::refrescar)
+                    ListaScreen(vm.estado.collectAsStateWithLifecycle().value, vm::refrescar,
+                        sincronizando = vm.sincronizando.collectAsStateWithLifecycle().value)
                 } }
             }
         }

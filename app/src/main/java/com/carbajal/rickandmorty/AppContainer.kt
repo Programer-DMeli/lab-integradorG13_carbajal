@@ -2,11 +2,12 @@ package com.carbajal.rickandmorty
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.carbajal.rickandmorty.data.repository.DemoItemRepository
+import com.carbajal.rickandmorty.data.repository.ItemRepositoryImpl
+import com.carbajal.rickandmorty.data.remote.RetrofitClient
 import com.carbajal.rickandmorty.data.repository.ItemRepository
 import com.carbajal.rickandmorty.ui.lista.ListaViewModel
 
-class AppContainer(val items: ItemRepository = DemoItemRepository()) {
+class AppContainer(val items: ItemRepository = ItemRepositoryImpl(RetrofitClient.crear())) {
     val factory = object : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T = when {
