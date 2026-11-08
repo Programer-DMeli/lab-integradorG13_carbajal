@@ -65,7 +65,11 @@ Los hitos H1–H15 compilaron antes de su commit. Los resultados, comandos y lí
 ./gradlew :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.carbajal.rickandmorty.RoomRepositoryTest
 ```
 
-El recorrido `CatalogoRealJourneyTest` se ejecuta por separado, suministrando `adminCorreo`, `adminClave`, `usuarioCorreo` y `usuarioClave` como argumentos de instrumentación. Las cuentas no forman parte de los fuentes. Se debe usar un emulador de pruebas: el recorrido alterna su conexión y limpia la caché de esta aplicación. Restaura la conexión al finalizar.
+El método `CatalogoRealJourneyTest#recorridoConCuentasReales` se ejecuta por separado, suministrando `adminCorreo`, `adminClave`, `usuarioCorreo` y `usuarioClave` como argumentos de instrumentación. Las cuentas no forman parte de los fuentes. Se debe usar un emulador de pruebas: el recorrido alterna su conexión y limpia la caché de esta aplicación. Restaura la conexión al finalizar.
+
+Para verificar el cierre de sesión entre procesos, ejecutar `CatalogoRealJourneyTest#cerrarSesionAntesDeReabrirProceso` con la cuenta usuario sobre una app de prueba sin sesión y después `CatalogoRealJourneyTest#loginPersisteEnOtroProcesoTrasCerrarSesion` en otra invocación de instrumentación. La segunda prueba comprueba que el PID cambió y que aparece el login.
+
+Validación cerrada: 11 pruebas de ViewModel, 5 de Room, recorrido completo y las 14 pruebas de aceptación verificadas. Lint termina sin errores; las advertencias y el detalle están en el informe.
 
 ## Capturas reales
 
@@ -82,3 +86,13 @@ El recorrido `CatalogoRealJourneyTest` se ejecuta por separado, suministrando `a
 | ![Admin](docs/evidencias/admin.png) | ![Notificación](docs/evidencias/notificacion.png) |
 
 ![Catálogo sin conexión](docs/evidencias/sin-conexion.png)
+
+## Evidencias adicionales
+
+| Usuario sin Admin | Favorito después de reabrir |
+| --- | --- |
+| ![Usuario](docs/evidencias/usuario.png) | ![Reapertura](docs/evidencias/reapertura.png) |
+
+| Permiso de notificaciones denegado | Login tras cerrar sesión y reabrir |
+| --- | --- |
+| ![Permiso denegado](docs/evidencias/permiso-denegado.png) | ![Sesión cerrada](docs/evidencias/cierre-sesion-reapertura.png) |

@@ -96,6 +96,7 @@ class CatalogoRealJourneyTest {
             texto("Admin").assertDoesNotExist(); foto("usuario")
             println("Avance de aceptación")
             // PA-14: la sincronización funciona aunque el permiso se revoque.
+            esperar("Sincronizar personajes",120000)
             device.executeShellCommand("appops set com.carbajal.rickandmorty POST_NOTIFICATION ignore")
             texto("Sincronizar personajes").performClick(); esperar("Sincronizar personajes",120000)
             texto("Abadango Cluster Princess").assertExists()
@@ -104,6 +105,9 @@ class CatalogoRealJourneyTest {
             esperar("Abadango Cluster Princess")
             compose.onNodeWithContentDescription("Quitar Abadango Cluster Princess de favoritos").assertExists()
             device.setOrientationNatural()
+        } catch (error: Throwable) {
+            foto("fallo-recorrido")
+            throw error
         } finally {
             device.setOrientationNatural()
             device.executeShellCommand("appops set com.carbajal.rickandmorty POST_NOTIFICATION default")
@@ -111,4 +115,33 @@ class CatalogoRealJourneyTest {
             device.executeShellCommand("svc data enable")
         }
     }
+    @Test fun cerrarSesionAntesDeReabrirProceso() {
+        val args = InstrumentationRegistry.getArguments()
+        val correo = args.getString("usuarioCorreo").orEmpty()
+        val clave = args.getString("usuarioClave").orEmpty()
+        assumeTrue("Requiere cuenta de prueba externa", correo.isNotEmpty() && clave.isNotEmpty())
+        device.executeShellCommand("pm grant com.carbajal.rickandmorty android.permission.POST_NOTIFICATIONS")
+        entrar(correo,clave)
+        esperar("Abadango Cluster Princess",120000)
+        texto("Cerrar sesión").performClick()
+        esperar("Entrar al portal")
+        foto("cierre-sesion")
+        File(InstrumentationRegistry.getInstrumentation().targetContext.filesDir,"pid-cierre-prueba.txt")
+            .writeText(android.os.Process.myPid().toString())
+    }
+
+    @Test fun loginPersisteEnOtroProcesoTrasCerrarSesion() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val prueba = File(context.filesDir,"pid-cierre-prueba.txt")
+        assumeTrue("Ejecutar primero cerrarSesionAntesDeReabrirProceso",prueba.exists())
+        val previo = prueba.readText().trim().toInt()
+        val actual = android.os.Process.myPid()
+        assumeTrue("Ejecutar esta comprobación en una instrumentación separada",previo != actual)
+        esperar("Entrar al portal")
+        texto("Cerrar sesión").assertDoesNotExist()
+        foto("cierre-sesion-reapertura")
+        File(context.getExternalFilesDir(null),"evidencias/procesos-sesion.json")
+            .writeText("{\"pidCierre\":$previo,\"pidReapertura\":$actual,\"loginVisible\":true}")
+    }
+
 }

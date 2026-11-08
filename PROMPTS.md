@@ -43,3 +43,12 @@ Este proyecto contiene implementación asistida por IA desde H2 y ajustes asisti
 ## Verificación humana y sustentación
 
 Revisar las interfaces `ItemRepository`, `AuthRepository` y `Notificador`, los mappers, la transacción que conserva favoritos y los estados de error. Los resultados comprobados y las limitaciones se registran en `docs/VALIDACION.md`. Ninguna afirmación de «100 % libre de errores» se deduce de las pruebas ejecutadas.
+
+## Consulta 5 Cierre de la validación
+
+- Fecha: 2026-11-08.
+- Herramienta: Codex.
+- Prompt: «Ya está abierto y se mantiene estable» para continuar en Medium_Phone; «Conservarlo público» para la visibilidad del repositorio.
+- Respuesta: ejecución de las cinco pruebas de Room y del recorrido real completo, seguida de comprobaciones entre procesos y del permiso de notificaciones denegado desde el diálogo del sistema.
+- Qué se usó y cambió: la prueba espera el final de la sincronización inicial antes de pulsar Sincronizar y guarda una captura de diagnóstico si falla. Se actualizaron las capturas reales y las evidencias. Se mantuvo la visibilidad pública solicitada.
+- Qué aprendimos: las pruebas UI deben esperar el estado que habilita la acción; encontrar datos en caché no significa que haya terminado la actualización en segundo plano. El cierre de sesión se confirma en pantalla antes de detener el proceso. Dos instrumentaciones con PID distintos comprobaron que al reabrir se mantiene el login.

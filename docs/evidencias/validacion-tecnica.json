@@ -28,8 +28,18 @@
     "errores": 0,
     "advertencias": 51
   },
-  "roomEjecutadas": 4,
-  "roomPendientes": 1,
-  "recorridoCompleto": "pendiente por cierre del emulador",
-  "apkSha256": "b5816cad34aba8161f8f348adac05793b795d31c5919e677d0ce5a782ce978ce"
+  "roomEjecutadas": 5,
+  "roomPendientes": 0,
+  "recorridoCompleto": "aprobado en Medium_Phone; 1 prueba instrumentada",
+  "apkSha256": "b5816cad34aba8161f8f348adac05793b795d31c5919e677d0ce5a782ce978ce",
+  "permisoDenegadoReal": true,
+  "sesionPersistidaEntreProcesos": true,
+  "favoritoPersistidoEntreProcesos": true,
+  "aceptacionVerificada": 14,
+  "cierreSesionEntreProcesos": {
+    "pidCierre": 10236,
+    "pidReapertura": 10565,
+    "loginVisible": true
+  },
+  "pruebasSesionSeparadas": 2
 }

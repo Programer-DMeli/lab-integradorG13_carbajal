@@ -6,7 +6,10 @@ Fecha: 2026-11-08, zona America/Lima. Variante: `species=Alien`.
 
 - Compilación desde limpio: `./gradlew clean :app:assembleDebug :app:assembleDebugAndroidTest :app:testDebugUnitTest :app:lintDebug` — correcta.
 - Pruebas unitarias: 8 de `ListaViewModel`, 3 de `LoginViewModel` y 1 prueba de plantilla; todas correctas.
-- Room en Android: 4 pruebas ejecutadas correctamente (paginación, favoritos al sincronizar, atomicidad frente a descarga parcial, detalle con respaldo local y limpieza de totales). Se añadió además una quinta prueba de cierre/reapertura de la base: compila y su ejecución final queda pendiente por la interrupción del emulador.
+- Room en Android: las 5 pruebas pasaron, incluida la persistencia del favorito al cerrar y reabrir la base. Registro: `evidencias/room-pruebas.txt`.
+- Recorrido real: `CatalogoRealJourneyTest#recorridoConCuentasReales` pasó completo en Medium_Phone (72,147 segundos). Registro: `evidencias/recorrido-pruebas.txt`.
+- Cierre de sesión entre procesos: dos pruebas separadas aprobadas (8,594 y 1,748 segundos). Los PID distintos y el login visible se registran en `evidencias/procesos-sesion.json`.
+- Las 14 pruebas de aceptación quedaron verificadas mediante el recorrido, las comprobaciones adicionales entre procesos y las pruebas de estados y persistencia.
 - Lint: 0 errores. Hay advertencias de mantenimiento, versiones sugeridas y recursos heredados; no se declara que el análisis esté libre de advertencias.
 - API real: 205 personajes Alien en 11 páginas al verificar. Esta cifra puede cambiar si el servicio actualiza su catálogo.
 - Firebase real: ambas cuentas existentes aceptan sus credenciales y leen el rol esperado. La lectura del perfil ajeno y la escritura del rol propio devuelven HTTP 403. Evidencia sin credenciales: `evidencias/firebase-validacion.json`.
@@ -15,20 +18,20 @@ Fecha: 2026-11-08, zona America/Lima. Variante: `species=Alien`.
 
 | Caso | Evidencia y estado |
 | --- | --- |
-| PA-01 Usuario sin Admin | Login y rol usuario comprobados por API; navegación del usuario pendiente de cerrar en el recorrido completo. |
+| PA-01 Usuario sin Admin | Comprobado en el recorrido: login usuario, catálogo y ausencia del acceso Admin. |
 | PA-02 Admin | Comprobado en el emulador: acceso al catálogo y panel con 205 guardados y 1 favorito. |
 | PA-03 Contraseña incorrecta | Comprobado en el recorrido: error y sin acceso al catálogo. |
 | PA-04 Campos vacíos | Comprobado en el recorrido y en prueba unitaria: validación sin llamar al repositorio de autenticación. |
 | PA-05 Primera sincronización | Lista real y notificación comprobadas; estado Cargando cubierto en prueba unitaria. |
 | PA-06 Detalle | Comprobado con personaje 6 y segundo endpoint; respaldo local cubierto por prueba Room. |
-| PA-07 Favorito al cerrar | Favorito conservado al recrear Activity y al sincronizar; verificación entre procesos y quinta prueba Room pendientes. |
+| PA-07 Favorito al cerrar | Comprobado en Room y en la app tras cerrar y reabrir su proceso: el favorito permanece en Favoritos. |
 | PA-08 Sin red con datos | Comprobado en emulador con conexión deshabilitada y aviso de datos guardados. |
-| PA-09 Sin red sin datos | Error y reintento cubiertos en pruebas unitarias; ejecución final del escenario UI pendiente. |
+| PA-09 Sin red sin datos | Comprobado en el recorrido: sin caché ni conexión aparece Error con Reintentar; al recuperar conexión se descarga la lista. |
 | PA-10 Sincronizar conserva favorito | Comprobado en UI y Room. |
-| PA-11 Limpiar caché | Totales en cero comprobados con Room. Se detectó y corrigió un estado de error antiguo; regresión unitaria aprobada, repetición UI pendiente. |
-| PA-12 Cerrar sesión y reabrir | Lógica cubierta en prueba unitaria; cierre y reapertura reales pendientes en el recorrido completo. |
-| PA-13 Rotación | Recreación de Activity con favoritos comprobada; rotación física del emulador pendiente de ejecución final. |
-| PA-14 Avisos denegados | Implementado el control de permiso y notificaciones desactivadas; comprobación UI final pendiente. |
+| PA-11 Limpiar caché | Comprobado en UI y Room: caché vacía y totales en cero; el reintento recupera los datos. La regresión del error antiguo está cubierta. |
+| PA-12 Cerrar sesión y reabrir | Comprobado en dos instrumentaciones separadas: PID 10236 cierra sesión y PID 10565 muestra el login. Evidencia: `evidencias/procesos-sesion.json`. |
+| PA-13 Rotación | Comprobado en el recorrido: recreación y rotación del emulador conservan los datos y el favorito. |
+| PA-14 Avisos denegados | Comprobado en el recorrido con avisos desactivados y, además, denegando POST_NOTIFICATIONS en el diálogo real: la sincronización termina y la app sigue funcionando. |
 
 ## Incidencias resueltas
 
@@ -38,9 +41,9 @@ Fecha: 2026-11-08, zona America/Lima. Variante: `species=Alien`.
 4. Limpiar caché después de un fallo de conexión retenía el error antiguo. Se corrigió la transición a lista vacía y se añadió una prueba de regresión.
 5. Selector ambiguo Favoritos en el recorrido: se distinguió la pestaña con acción del contador Admin.
 
-## Límite de la validación en el emulador
+## Ejecución en el emulador
 
-`Medium_Phone` consiguió iniciar y ejecutar parte del recorrido. Luego terminó por un fallo gráfico de EGL/Vulkan; los intentos de arranque posteriores no se mantuvieron disponibles en ADB. Se probaron arranque sin instantánea y renderizado por software. Los cierres del emulador no se cuentan como pruebas aprobadas de la aplicación.
+La primera sesión se interrumpió por cierres del emulador relacionados con EGL/Vulkan. Después de que la propietaria lo abrió de forma estable, se ejecutaron las cinco pruebas de Room y el recorrido completo con resultado correcto. Las ejecuciones fallidas previas no se contaron como aprobadas. Se corrigieron selectores ambiguos y una espera de sincronización en la prueba. La comprobación de cierre de sesión se ejecutó por separado en dos procesos distintos y también pasó. El reinicio completo del AVD restauró una instantánea anterior; por eso se verificó la persistencia entre procesos sin depender de esa instantánea.
 
 No se ejecutan dos instrumentaciones simultáneas. El recorrido real necesita las cuatro credenciales mediante argumentos de ejecución y un emulador estable. Las contraseñas y tokens no se guardan en fuentes, capturas ni registros del repositorio.
 
@@ -50,4 +53,4 @@ No se ejecutan dos instrumentaciones simultáneas. El recorrido real necesita la
 - `mejora-ia`: pruebas, correcciones y documentación de asistencia en `PROMPTS.md`.
 - La autoría corresponde a la cuenta real configurada. No se simularon seis aportes de un segundo integrante.
 - El JSON local de Firebase se retiró del seguimiento en H1. El commit base previo se conservó: no se reescribió el historial publicado.
-- La visibilidad del repositorio se revisa con la persona propietaria, ya que inicialmente era público y la consigna pide privado.
+- El repositorio se conserva público por instrucción explícita de su propietaria. Esta decisión difiere del requisito de repositorio privado de la consigna.
