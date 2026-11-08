@@ -10,6 +10,7 @@ import com.carbajal.rickandmorty.ui.mensajeDe
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.catch
 
 data class ResumenAdmin(val guardados: Int, val favoritos: Int)
 
@@ -21,7 +22,7 @@ class AdminViewModel(private val repo: ItemRepository, private val notificador: 
     private val _aviso = MutableStateFlow<String?>(null)
     val aviso = _aviso.asStateFlow()
     init { viewModelScope.launch {
-        repo.items.collect { lista -> _estado.value = UiState.Exito(ResumenAdmin(lista.size, lista.count { it.esFavorito })) }
+        repo.items.catch { _estado.value = UiState.Error(mensajeDe(it)) }.collect { lista -> _estado.value = UiState.Exito(ResumenAdmin(lista.size, lista.count { it.esFavorito })) }
     } }
     fun sincronizar() = operar {
         repo.refrescar().onSuccess {

@@ -11,6 +11,7 @@ import com.carbajal.rickandmorty.ui.mensajeDe
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 class ListaViewModel(private val repo: ItemRepository, private val notificador: Notificador) : ViewModel() {
@@ -21,10 +22,18 @@ class ListaViewModel(private val repo: ItemRepository, private val notificador: 
     private val _aviso = MutableStateFlow<String?>(null)
     val aviso = _aviso.asStateFlow()
     private var primeraCargaTerminada = false
+    private var ultimaFalla: Throwable? = null
     init {
-        viewModelScope.launch { repo.items.collect {
-            if (it.isNotEmpty() || primeraCargaTerminada) _estado.value = UiState.Exito(it)
-        } }
+        viewModelScope.launch {
+            repo.items.catch { _estado.value = UiState.Error(mensajeDe(it)) }.collect { lista ->
+                val falla = ultimaFalla
+                when {
+                    lista.isNotEmpty() -> _estado.value = UiState.Exito(lista)
+                    falla != null -> _estado.value = UiState.Error(mensajeDe(falla))
+                    primeraCargaTerminada -> _estado.value = UiState.Exito(lista)
+                }
+            }
+        }
         refrescar()
     }
     fun alternarFavorito(id: Int) { viewModelScope.launch {
@@ -39,10 +48,12 @@ class ListaViewModel(private val repo: ItemRepository, private val notificador: 
                 val resultado = repo.refrescar()
                 primeraCargaTerminada = true
                 resultado.onSuccess { n ->
+                    ultimaFalla = null
                     notificador.mostrar("Datos actualizados", "Se guardaron $n elementos")
                     _aviso.value = null
                     _estado.value = UiState.Exito(repo.items.first())
                 }.onFailure {
+                    ultimaFalla = it
                     val guardados = repo.items.first()
                     if (guardados.isEmpty()) _estado.value = UiState.Error(mensajeDe(it))
                     else {
