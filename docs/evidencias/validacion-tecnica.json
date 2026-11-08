@@ -1,0 +1,35 @@
+{
+  "fecha": "2026-11-08",
+  "compilacionLimpia": true,
+  "unitarias": [
+    {
+      "name": "com.carbajal.rickandmorty.ExampleUnitTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.carbajal.rickandmorty.LoginViewModelTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.carbajal.rickandmorty.ListaViewModelTest",
+      "tests": "8",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    }
+  ],
+  "lint": {
+    "errores": 0,
+    "advertencias": 51
+  },
+  "roomEjecutadas": 4,
+  "roomPendientes": 1,
+  "recorridoCompleto": "pendiente por cierre del emulador",
+  "apkSha256": "b5816cad34aba8161f8f348adac05793b795d31c5919e677d0ce5a782ce978ce"
+}

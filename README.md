@@ -58,4 +58,27 @@ La autoría del historial es la cuenta Git configurada por la persona que realiz
 
 ## Validación y evidencias
 
-Los hitos H1–H15 compilaron antes de su commit. Firebase se configuró en la consola del proyecto existente. La fase siguiente incorpora las pruebas de ViewModel y persistencia, las capturas y el registro verificable de las 14 pruebas de aceptación. La compilación por sí sola no acredita esas pruebas funcionales.
+Los hitos H1–H15 compilaron antes de su commit. Los resultados, comandos y límites de la validación se detallan en [docs/VALIDACION.md](docs/VALIDACION.md). El registro de asistencia está en [PROMPTS.md](PROMPTS.md).
+
+```bash
+./gradlew :app:testDebugUnitTest :app:lintDebug
+./gradlew :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.carbajal.rickandmorty.RoomRepositoryTest
+```
+
+El recorrido `CatalogoRealJourneyTest` se ejecuta por separado, suministrando `adminCorreo`, `adminClave`, `usuarioCorreo` y `usuarioClave` como argumentos de instrumentación. Las cuentas no forman parte de los fuentes. Se debe usar un emulador de pruebas: el recorrido alterna su conexión y limpia la caché de esta aplicación. Restaura la conexión al finalizar.
+
+## Capturas reales
+
+| Login | Catálogo |
+| --- | --- |
+| ![Login](docs/evidencias/login.png) | ![Catálogo](docs/evidencias/lista.png) |
+
+| Detalle | Favoritos |
+| --- | --- |
+| ![Detalle](docs/evidencias/detalle.png) | ![Favoritos](docs/evidencias/favoritos.png) |
+
+| Admin | Notificación |
+| --- | --- |
+| ![Admin](docs/evidencias/admin.png) | ![Notificación](docs/evidencias/notificacion.png) |
+
+![Catálogo sin conexión](docs/evidencias/sin-conexion.png)
