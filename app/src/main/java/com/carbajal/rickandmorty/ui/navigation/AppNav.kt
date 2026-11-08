@@ -32,7 +32,8 @@ fun AppNav(container: AppContainer) {
             val vm: ListaViewModel = viewModel(factory = container.factory)
             ListaScreen(vm.estado.collectAsStateWithLifecycle().value, vm::refrescar,
                 abrir = { nav.navigate("detalle/$it") }, favorito = vm::alternarFavorito,
-                sincronizando = vm.sincronizando.collectAsStateWithLifecycle().value)
+                sincronizando = vm.sincronizando.collectAsStateWithLifecycle().value,
+                aviso = vm.aviso.collectAsStateWithLifecycle().value)
         }
         composable("favoritos") {
             val vm: FavoritosViewModel = viewModel(factory = container.factory)
@@ -48,4 +49,3 @@ fun AppNav(container: AppContainer) {
     }
     } }
 }
-
