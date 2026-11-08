@@ -20,12 +20,13 @@ import com.carbajal.rickandmorty.ui.lista.*
 import com.carbajal.rickandmorty.ui.login.*
 
 @Composable
-fun AppNav(container: AppContainer) {
+fun AppNav(container: AppContainer, sesionIniciada: () -> Unit = {}) {
     val login: LoginViewModel = viewModel(factory = container.factory)
     val estado by login.estado.collectAsStateWithLifecycle()
     val sesion = (estado as? UiState.Exito)?.datos
     if (sesion == null) LoginScreen(estado, login::ingresar, login::restaurar)
     else key(sesion.uid) {
+        LaunchedEffect(sesion.uid) { sesionIniciada() }
         Column {
             Row(Modifier.fillMaxWidth().padding(horizontal = 20.dp), horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {

@@ -1,5 +1,6 @@
 package com.carbajal.rickandmorty.ui.admin
 
+import com.carbajal.rickandmorty.notification.Notificador
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.carbajal.rickandmorty.data.repository.ItemRepository
@@ -12,7 +13,7 @@ import kotlinx.coroutines.launch
 
 data class ResumenAdmin(val guardados: Int, val favoritos: Int)
 
-class AdminViewModel(private val repo: ItemRepository) : ViewModel() {
+class AdminViewModel(private val repo: ItemRepository, private val notificador: Notificador) : ViewModel() {
     private val _estado = MutableStateFlow<UiState<ResumenAdmin>>(UiState.Cargando)
     val estado = _estado.asStateFlow()
     private val _ocupado = MutableStateFlow(false)
@@ -23,7 +24,10 @@ class AdminViewModel(private val repo: ItemRepository) : ViewModel() {
         repo.items.collect { lista -> _estado.value = UiState.Exito(ResumenAdmin(lista.size, lista.count { it.esFavorito })) }
     } }
     fun sincronizar() = operar {
-        repo.refrescar().onSuccess { _aviso.value = "Se guardaron $it elementos" }
+        repo.refrescar().onSuccess {
+            _aviso.value = "Se guardaron $it elementos"
+            notificador.mostrar("Datos actualizados", "Se guardaron $it elementos")
+        }
             .onFailure { _aviso.value = mensajeDe(it) }
     }
     fun limpiarCache() = operar {

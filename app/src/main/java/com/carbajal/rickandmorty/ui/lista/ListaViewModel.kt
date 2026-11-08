@@ -1,5 +1,6 @@
 package com.carbajal.rickandmorty.ui.lista
 
+import com.carbajal.rickandmorty.notification.Notificador
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.carbajal.rickandmorty.data.repository.ItemRepository
@@ -12,7 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-class ListaViewModel(private val repo: ItemRepository) : ViewModel() {
+class ListaViewModel(private val repo: ItemRepository, private val notificador: Notificador) : ViewModel() {
     private val _estado = MutableStateFlow<UiState<List<Item>>>(UiState.Cargando)
     val estado = _estado.asStateFlow()
     private val _sincronizando = MutableStateFlow(false)
@@ -37,7 +38,8 @@ class ListaViewModel(private val repo: ItemRepository) : ViewModel() {
             try {
                 val resultado = repo.refrescar()
                 primeraCargaTerminada = true
-                resultado.onSuccess {
+                resultado.onSuccess { n ->
+                    notificador.mostrar("Datos actualizados", "Se guardaron $n elementos")
                     _aviso.value = null
                     _estado.value = UiState.Exito(repo.items.first())
                 }.onFailure {
