@@ -1,6 +1,7 @@
 package com.carbajal.rickandmorty
 
 import android.content.Context
+import com.carbajal.rickandmorty.ui.admin.AdminViewModel
 import com.carbajal.rickandmorty.ui.login.LoginViewModel
 import com.carbajal.rickandmorty.data.auth.AuthRepository
 import com.carbajal.rickandmorty.data.auth.FirebaseAuthRepository
@@ -26,6 +27,7 @@ class AppContainer(context: Context) {
             modelClass.isAssignableFrom(DetalleViewModel::class.java) -> DetalleViewModel(items) as T
             modelClass.isAssignableFrom(FavoritosViewModel::class.java) -> FavoritosViewModel(items) as T
             modelClass.isAssignableFrom(LoginViewModel::class.java) -> LoginViewModel(auth) as T
+            modelClass.isAssignableFrom(AdminViewModel::class.java) -> AdminViewModel(items) as T
             else -> error("ViewModel no registrado: ${modelClass.name}")
         }
     }
