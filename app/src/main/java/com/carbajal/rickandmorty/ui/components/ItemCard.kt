@@ -3,6 +3,8 @@ package com.carbajal.rickandmorty.ui.components
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -23,7 +25,7 @@ fun ItemCard(item: Item, abrir: () -> Unit, favorito: (() -> Unit)? = null) {
                 Text(item.subtitulo, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Text(item.estado, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
             }
-            favorito?.let { IconButton(onClick = it) { Text(if (item.esFavorito) "★" else "☆", style = MaterialTheme.typography.headlineMedium) } }
+            favorito?.let { IconButton(onClick = it, modifier = Modifier.semantics { contentDescription = if (item.esFavorito) "Quitar ${item.titulo} de favoritos" else "Agregar ${item.titulo} a favoritos" }) { Text(if (item.esFavorito) "★" else "☆", style = MaterialTheme.typography.headlineMedium) } }
         }
     }
 }

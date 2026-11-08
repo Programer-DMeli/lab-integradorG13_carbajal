@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.carbajal.rickandmorty.data.repository.ItemRepository
 import com.carbajal.rickandmorty.domain.model.Item
+import com.carbajal.rickandmorty.data.resultado
 import com.carbajal.rickandmorty.ui.UiState
 import com.carbajal.rickandmorty.ui.mensajeDe
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +24,9 @@ class ListaViewModel(private val repo: ItemRepository) : ViewModel() {
         } }
         refrescar()
     }
+    fun alternarFavorito(id: Int) { viewModelScope.launch {
+        resultado { repo.alternarFavorito(id) }.onFailure { _estado.value = UiState.Error(mensajeDe(it)) }
+    } }
     fun refrescar() {
         if (_sincronizando.value) return
         _sincronizando.value = true
