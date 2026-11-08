@@ -1,6 +1,8 @@
 package com.carbajal.rickandmorty.ui.navigation
 
 import androidx.compose.runtime.*
+import com.carbajal.rickandmorty.ui.login.*
+import com.carbajal.rickandmorty.ui.UiState
 import androidx.compose.material3.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.ui.Modifier
@@ -16,6 +18,21 @@ import com.carbajal.rickandmorty.ui.detalle.*
 
 @Composable
 fun AppNav(container: AppContainer) {
+    val login: LoginViewModel = viewModel(factory = container.factory)
+    val estado by login.estado.collectAsStateWithLifecycle()
+    val sesion = (estado as? UiState.Exito)?.datos
+    if (sesion == null) LoginScreen(estado, login::ingresar, login::restaurar)
+    else Column {
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text("Rick and Morty")
+            TextButton(onClick = login::cerrarSesion) { Text("Cerrar sesión") }
+        }
+        Box(Modifier.weight(1f)) { CatalogoNav(container) }
+    }
+}
+
+@Composable
+private fun CatalogoNav(container: AppContainer) {
     val nav = rememberNavController()
     val entry by nav.currentBackStackEntryAsState()
     Scaffold(bottomBar = {
