@@ -13,12 +13,13 @@ import java.io.File
 class CatalogoRealJourneyTest {
     @get:Rule val compose = createAndroidComposeRule<MainActivity>()
     private val device get() = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-    private fun texto(t: String) = compose.onNodeWithText(t, useUnmergedTree = false)
+    private fun texto(t: String) = if (t == "Favoritos") compose.onNode(hasText(t) and hasClickAction()) else compose.onNodeWithText(t, useUnmergedTree = false)
     private fun esperar(t: String, timeout: Long = 60000) {
         compose.waitUntil(timeout) { compose.onAllNodesWithText(t).fetchSemanticsNodes().isNotEmpty() }
     }
     private fun foto(nombre: String) {
         compose.waitForIdle()
+        if (nombre == "lista" || nombre == "detalle") Thread.sleep(3000)
         val dir = File(InstrumentationRegistry.getInstrumentation().targetContext.getExternalFilesDir(null), "evidencias").apply { mkdirs() }
         assertTrue(device.takeScreenshot(File(dir,"$nombre.png")))
     }
@@ -85,10 +86,17 @@ class CatalogoRealJourneyTest {
             entrar(usuarioCorreo,usuarioClave); esperar("Abadango Cluster Princess",120000)
             texto("Admin").assertDoesNotExist(); foto("usuario")
             // PA-14: la sincronización funciona aunque el permiso se revoque.
-            device.executeShellCommand("pm revoke com.carbajal.rickandmorty android.permission.POST_NOTIFICATIONS")
+            device.executeShellCommand("appops set com.carbajal.rickandmorty POST_NOTIFICATION ignore")
             texto("Sincronizar personajes").performClick(); esperar("Sincronizar personajes",120000)
             texto("Abadango Cluster Princess").assertExists()
+            compose.onNodeWithContentDescription("Agregar Abadango Cluster Princess a favoritos").performClick()
+            device.setOrientationLeft()
+            esperar("Abadango Cluster Princess")
+            compose.onNodeWithContentDescription("Quitar Abadango Cluster Princess de favoritos").assertExists()
+            device.setOrientationNatural()
         } finally {
+            device.setOrientationNatural()
+            device.executeShellCommand("appops set com.carbajal.rickandmorty POST_NOTIFICATION default")
             device.executeShellCommand("svc wifi enable")
             device.executeShellCommand("svc data enable")
         }

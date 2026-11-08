@@ -25,10 +25,20 @@ class ListaViewModel(private val repo: ItemRepository, private val notificador: 
     private var ultimaFalla: Throwable? = null
     init {
         viewModelScope.launch {
+            var habiaDatos = false
             repo.items.catch { _estado.value = UiState.Error(mensajeDe(it)) }.collect { lista ->
                 val falla = ultimaFalla
                 when {
-                    lista.isNotEmpty() -> _estado.value = UiState.Exito(lista)
+                    lista.isNotEmpty() -> {
+                        habiaDatos = true
+                        _estado.value = UiState.Exito(lista)
+                    }
+                    habiaDatos -> {
+                        habiaDatos = false
+                        ultimaFalla = null
+                        _aviso.value = null
+                        _estado.value = UiState.Exito(lista)
+                    }
                     falla != null -> _estado.value = UiState.Error(mensajeDe(falla))
                     primeraCargaTerminada -> _estado.value = UiState.Exito(lista)
                 }
@@ -42,7 +52,7 @@ class ListaViewModel(private val repo: ItemRepository, private val notificador: 
     fun refrescar() {
         if (_sincronizando.value) return
         _sincronizando.value = true
-        if (_estado.value is UiState.Error) _estado.value = UiState.Cargando
+        if ((_estado.value as? UiState.Exito)?.datos.isNullOrEmpty()) _estado.value = UiState.Cargando
         viewModelScope.launch {
             try {
                 val resultado = repo.refrescar()

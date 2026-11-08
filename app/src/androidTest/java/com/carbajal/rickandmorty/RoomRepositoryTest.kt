@@ -54,6 +54,23 @@ class RoomRepositoryTest {
         assertEquals(0,repo.cantidadGuardada()); assertEquals(0,repo.cantidadFavoritos())
         assertTrue(repo.items.first().isEmpty())
     }
+    @Test fun favoritoSobreviveAlCerrarYReabrirBase() = runBlocking {
+        val context = ApplicationProvider.getApplicationContext<android.content.Context>()
+        val nombre = "persistencia-prueba.db"
+        context.deleteDatabase(nombre)
+        val primera = Room.databaseBuilder(context, AppDatabase::class.java, nombre).build()
+        try {
+            val repoInicial = ItemRepositoryImpl(FakeApi(),primera)
+            repoInicial.refrescar().getOrThrow()
+            repoInicial.alternarFavorito(6)
+        } finally { primera.close() }
+        val segunda = Room.databaseBuilder(context, AppDatabase::class.java, nombre).build()
+        try {
+            val reabierto = ItemRepositoryImpl(FakeApi(),segunda)
+            assertEquals(6,reabierto.favoritos.first().single().id)
+            assertEquals(2,reabierto.cantidadGuardada())
+        } finally { segunda.close(); context.deleteDatabase(nombre) }
+    }
     private class FakeApi : ApiService {
         val paginas = mutableListOf<Int>()
         var fallarSegunda = false

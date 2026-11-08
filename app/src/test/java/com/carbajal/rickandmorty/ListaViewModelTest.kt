@@ -84,4 +84,19 @@ class ListaViewModelTest {
         advanceUntilIdle()
         assertTrue((vm.estado.value as UiState.Exito).datos.single().esFavorito)
     }
+    @Test fun limpiarCacheTrasFalloDeRefrescoMuestraVacioSinAvisoAntiguo() = runTest(dispatcher) {
+        repo.datos.value = listOf(Item(6,"Princesa","Alien"))
+        repo.accion = { Result.failure(IOException()) }
+        val vm = ListaViewModel(repo, notificador)
+        advanceUntilIdle()
+        assertNotNull(vm.aviso.value)
+        repo.limpiarCache()
+        advanceUntilIdle()
+        assertEquals(UiState.Exito(emptyList<Item>()),vm.estado.value)
+        assertNull(vm.aviso.value)
+        vm.refrescar()
+        advanceUntilIdle()
+        assertTrue(vm.estado.value is UiState.Error)
+    }
+
 }
