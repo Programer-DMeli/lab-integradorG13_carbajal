@@ -12,7 +12,7 @@ import com.carbajal.rickandmorty.ui.navigation.AppNav
 import com.carbajal.rickandmorty.ui.theme.RickandmortyTheme
 
 class MainActivity : ComponentActivity() {
-    private val container by lazy { AppContainer() }
+    private val container get() = (application as CatalogoApplication).container
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

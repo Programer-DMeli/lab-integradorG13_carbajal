@@ -1,30 +1,53 @@
 package com.carbajal.rickandmorty.data.repository
 
+import androidx.room.withTransaction
 import com.carbajal.rickandmorty.data.resultado
+import com.carbajal.rickandmorty.data.local.AppDatabase
+import com.carbajal.rickandmorty.data.mapper.aEntity
 import com.carbajal.rickandmorty.data.mapper.aModelo
 import com.carbajal.rickandmorty.data.remote.ApiService
 import com.carbajal.rickandmorty.domain.model.Item
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
-class ItemRepositoryImpl(private val api: ApiService) : ItemRepository {
-    private val datos = MutableStateFlow<List<Item>>(emptyList())
-    override val items = datos
-    override val favoritos = datos.map { lista -> lista.filter { it.esFavorito } }
+class ItemRepositoryImpl(private val api: ApiService, private val db: AppDatabase) : ItemRepository {
+    private val dao = db.itemDao()
+    private val escritura = Mutex()
+    override val items = dao.todos().map { lista -> lista.map { it.aModelo() } }
+    override val favoritos = dao.favoritos().map { lista -> lista.map { it.aModelo() } }
+
     override suspend fun refrescar(): Result<Int> = resultado {
-        val nuevos = mutableListOf<Item>()
-        var pagina = 1
-        do {
-            val respuesta = api.listar(pagina = pagina)
-            nuevos += respuesta.results.map { it.aModelo() }
-            pagina++
-        } while (respuesta.info.next != null)
-        datos.value = nuevos.distinctBy { it.id }
-        datos.value.size
+        escritura.withLock {
+            val nuevos = mutableListOf<Item>()
+            var pagina = 1
+            do {
+                val respuesta = api.listar(pagina = pagina)
+                nuevos += respuesta.results.map { it.aModelo() }
+                pagina++
+            } while (respuesta.info.next != null)
+            val unicos = nuevos.distinctBy { it.id }
+            // No se publica una descarga parcial. Favoritos y datos cambian atómicamente.
+            db.withTransaction {
+                val favoritos = dao.idsFavoritos().toSet()
+                dao.guardarTodos(unicos.map { it.copy(esFavorito = it.id in favoritos).aEntity() })
+            }
+            unicos.size
+        }
     }
-    override suspend fun obtenerDetalle(id: Int) = resultado { api.detalle(id).aModelo() }
-    override suspend fun alternarFavorito(id: Int) { datos.value = datos.value.map { if (it.id == id) it.copy(esFavorito = !it.esFavorito) else it } }
-    override suspend fun cantidadGuardada() = datos.value.size
-    override suspend fun cantidadFavoritos() = datos.value.count { it.esFavorito }
-    override suspend fun limpiarCache() { datos.value = emptyList() }
+
+    override suspend fun obtenerDetalle(id: Int): Result<Item> = resultado {
+        try {
+            api.detalle(id).aModelo().copy(esFavorito = dao.buscar(id)?.esFavorito ?: false)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            dao.buscar(id)?.aModelo() ?: throw e
+        }
+    }
+    override suspend fun alternarFavorito(id: Int) { escritura.withLock { dao.alternarFavorito(id) } }
+    override suspend fun cantidadGuardada() = dao.contar()
+    override suspend fun cantidadFavoritos() = dao.contarFavoritos()
+    override suspend fun limpiarCache() { escritura.withLock { dao.borrarTodo() } }
 }

@@ -1,14 +1,19 @@
 package com.carbajal.rickandmorty
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.room.Room
+import com.carbajal.rickandmorty.data.local.AppDatabase
+import com.carbajal.rickandmorty.data.repository.ItemRepository
 import com.carbajal.rickandmorty.data.repository.ItemRepositoryImpl
 import com.carbajal.rickandmorty.data.remote.RetrofitClient
-import com.carbajal.rickandmorty.data.repository.ItemRepository
 import com.carbajal.rickandmorty.ui.lista.ListaViewModel
 import com.carbajal.rickandmorty.ui.detalle.DetalleViewModel
 
-class AppContainer(val items: ItemRepository = ItemRepositoryImpl(RetrofitClient.crear())) {
+class AppContainer(context: Context) {
+    private val db = Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, "catalogo.db").build()
+    val items: ItemRepository = ItemRepositoryImpl(RetrofitClient.crear(), db)
     val factory = object : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T = when {
