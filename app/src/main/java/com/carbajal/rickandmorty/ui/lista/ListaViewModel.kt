@@ -68,7 +68,7 @@ class ListaViewModel(private val repo: ItemRepository, private val notificador: 
                     if (guardados.isEmpty()) _estado.value = UiState.Error(mensajeDe(it))
                     else {
                         _estado.value = UiState.Exito(guardados)
-                        _aviso.value = if (it is java.io.IOException) "Sin conexión: mostrando datos guardados"
+                        _aviso.value = if (it is java.io.IOException) "Último intento sin conexión: mostrando datos guardados"
                             else "No se pudo actualizar: mostrando datos guardados"
                     }
                 }

@@ -54,7 +54,7 @@ class ListaViewModelTest {
         val vm = ListaViewModel(repo, notificador)
         advanceUntilIdle()
         assertEquals(UiState.Exito(items), vm.estado.value)
-        assertEquals("Sin conexión: mostrando datos guardados", vm.aviso.value)
+        assertEquals("Último intento sin conexión: mostrando datos guardados", vm.aviso.value)
         assertTrue(notificador.mensajes.isEmpty())
     }
     @Test fun reintentarRecuperaErrorYLimpiaAviso() = runTest(dispatcher) {

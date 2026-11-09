@@ -77,7 +77,7 @@ class CatalogoRealJourneyTest {
             device.executeShellCommand("svc wifi disable")
             device.executeShellCommand("svc data disable")
             texto("Catálogo").performClick(); texto("Sincronizar personajes").performClick()
-            esperar("Sin conexión: mostrando datos guardados",60000); foto("sin-conexion")
+            esperar("Último intento sin conexión: mostrando datos guardados",60000); foto("sin-conexion")
             println("Avance de aceptación")
             // PA-11 y PA-09: limpiar y volver a sincronizar sin datos ni red.
             texto("Admin").performClick(); texto("Limpiar caché").performClick(); texto("Limpiar").performClick()

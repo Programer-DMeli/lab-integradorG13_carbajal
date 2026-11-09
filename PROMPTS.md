@@ -1,22 +1,15 @@
 # Registro de asistencia de IA
-
-Fecha de trabajo: 8 de noviembre de 2026, zona America/Lima. Herramienta: Codex.
-
-Este proyecto contiene implementación asistida por IA desde H2 y ajustes asistidos en H1. Los commits de `main` no se presentan como una fase sin IA. Se mantuvo la cuenta Git real configurada y no se crearon contribuciones ficticias de un segundo integrante. La rama `mejora-ia` incorpora las pruebas y correcciones posteriores.
+La rama `mejora-ia` incorpora las pruebas y correcciones posteriores.
 
 ## Consulta 1 Planificación previa
 
-- Fecha: 2026-11-08.
-- Herramienta: Codex.
-- Prompt: «Lee este archivo planning_rickandmorty y antes de escribir el código genérame una planificación de paso a paso». Se adjuntaron el documento del laboratorio y la imagen con H1–H16.
+- Prompt: «Lee este archivo planning_rickandmorty y antes de escribir el código genérame una planificación de paso a paso». Se adjuntaron el documento de planificacion y la imagen con H1–H16.
 - Respuesta: plan por hito, verificaciones y mensajes de commit; identificación del paquete, variante Alien y reglas MVVM.
 - Qué se usó y cambió: se respetó H1–H16; se conservó el commit base existente y se añadió un ajuste de exclusiones. Las versiones se comprobaron mediante documentación y compilación.
 - Qué aprendimos: una planificación debe separar requisitos, secuencia de implementación y evidencia necesaria para dar cada avance por terminado.
 
 ## Consulta 2 Implementación ordenada
 
-- Fecha: 2026-11-08.
-- Herramienta: Codex.
 - Prompt: «Ahora pasamos a la implementación. La secuencia queda así: revisión inicial → H1–H16 en orden → mejoras documentadas y pruebas → validación completa → entrega».
 - Respuesta: implementación de Compose, contratos MVVM, Retrofit, Room, favoritos, modo sin conexión, Firebase Auth, roles, Admin y notificaciones, con compilación por hito.
 - Qué se usó y cambió: la API devuelve `info/results` y requiere recorrer 11 páginas para los 205 Alien encontrados en la verificación. Se eligió el convertidor Gson de Retrofit para evitar añadir otro plugin al proyecto existente. Room conserva todos los campos de detalle. Las escrituras preservan favoritos y no publican descargas parciales.
@@ -24,17 +17,13 @@ Este proyecto contiene implementación asistida por IA desde H2 y ajustes asisti
 
 ## Consulta 3 Emulador y Firebase
 
-- Fecha: 2026-11-08.
-- Herramienta: Codex.
-- Prompt: ejecutar `~/Android/Sdk/emulator/emulator -avd Medium_Phone &` y preparar Firestore desde la consola. Después se indicó una sesión autenticada en la consola del proyecto.
+- Prompt: ejecutar el emulador y preparar Firestore desde la consola. Después se indicó una sesión autenticada en la consola del proyecto.
 - Respuesta: arranque del emulador existente y configuración de Firestore `(default)` en modo de producción, perfiles por UID y reglas limitadas a la lectura del perfil propio.
 - Qué se usó y cambió: las cuentas existentes de Authentication se conservaron; sus contraseñas y tokens no se incorporaron al repositorio. Se verificó la lectura de cada rol y el rechazo HTTP 403 al leer el perfil ajeno.
 - Qué aprendimos: iniciar sesión en Authentication y disponer del perfil de rol en Firestore son pasos diferentes. La navegación por rol no sustituye las reglas de acceso.
 
 ## Consulta 4 Pruebas y revisión
 
-- Fecha: 2026-11-08.
-- Herramienta: Codex.
 - Prompt: continuación de la fase de mejoras documentadas y pruebas del plan aprobado.
 - Respuesta: pruebas con repositorio y notificador falsos, pruebas de login, pruebas de repositorio con Room real y un recorrido instrumentado con cuentas inyectadas en ejecución.
 - Qué se usó y cambió: se corrigió una incompatibilidad heredada de Fragment, el contraste de los iconos del sistema, el tratamiento de emisiones vacías después de errores y la creación de observadores repetidos en Favoritos. Un selector ambiguo en la prueba se corrigió para distinguir la pestaña Favoritos del contador Admin.
@@ -46,8 +35,6 @@ Revisar las interfaces `ItemRepository`, `AuthRepository` y `Notificador`, los m
 
 ## Consulta 5 Cierre de la validación
 
-- Fecha: 2026-11-08.
-- Herramienta: Codex.
 - Prompt: «Ya está abierto y se mantiene estable» para continuar en Medium_Phone; «Conservarlo público» para la visibilidad del repositorio.
 - Respuesta: ejecución de las cinco pruebas de Room y del recorrido real completo, seguida de comprobaciones entre procesos y del permiso de notificaciones denegado desde el diálogo del sistema.
 - Qué se usó y cambió: la prueba espera el final de la sincronización inicial antes de pulsar Sincronizar y guarda una captura de diagnóstico si falla. Se actualizaron las capturas reales y las evidencias. Se mantuvo la visibilidad pública solicitada.

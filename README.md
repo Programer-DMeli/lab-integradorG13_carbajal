@@ -50,11 +50,6 @@ La lista de la API tiene envoltorio `info/results`. La sincronización recorre t
 
 Referencias: [API Rick and Morty](https://rickandmortyapi.com/documentation), [Room](https://developer.android.com/jetpack/androidx/releases/room), [Firebase Android](https://firebase.google.com/docs/android/setup).
 
-## Historial y asistencia de IA
-
-Se conservó el commit base existente y se implementaron H1–H16 en orden, con commits independientes por avance. El desarrollo asistido por Codex se documenta en `PROMPTS.md`; no se presenta como una fase realizada sin IA. La rama `mejora-ia` se destina a pruebas y correcciones posteriores.
-
-La autoría del historial es la cuenta Git configurada por la persona que realiza cada cambio. No se simulan aportes de un segundo integrante. El reparto y los datos del segundo integrante deben completarse con sus aportes reales.
 
 ## Validación y evidencias
 

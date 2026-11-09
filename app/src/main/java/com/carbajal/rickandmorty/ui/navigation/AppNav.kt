@@ -10,6 +10,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
 import androidx.navigation.navArgument
+import com.carbajal.rickandmorty.ui.connectivity.ConexionViewModel
+import com.carbajal.rickandmorty.ui.components.IndicadorConexion
 import com.carbajal.rickandmorty.AppContainer
 import com.carbajal.rickandmorty.domain.model.Rol
 import com.carbajal.rickandmorty.ui.UiState
@@ -24,19 +26,26 @@ fun AppNav(container: AppContainer, sesionIniciada: () -> Unit = {}) {
     val login: LoginViewModel = viewModel(factory = container.factory)
     val estado by login.estado.collectAsStateWithLifecycle()
     val sesion = (estado as? UiState.Exito)?.datos
-    if (sesion == null) LoginScreen(estado, login::ingresar, login::restaurar)
-    else key(sesion.uid) {
-        LaunchedEffect(sesion.uid) { sesionIniciada() }
-        Column {
-            Row(Modifier.fillMaxWidth().padding(horizontal = 20.dp), horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+    val conexion: ConexionViewModel = viewModel(factory = container.factory)
+    val estadoConexion by conexion.estado.collectAsStateWithLifecycle()
+    Column(Modifier.fillMaxSize()) {
+        IndicadorConexion(estadoConexion, conSesion = sesion != null)
+        Box(Modifier.weight(1f)) {
+            if (sesion == null) LoginScreen(estado, login::ingresar, login::restaurar)
+            else key(sesion.uid) {
+                LaunchedEffect(sesion.uid) { sesionIniciada() }
                 Column {
-                    Text("RICK AND MORTY", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
-                    Text(if (sesion.rol == Rol.ADMIN) "Administrador" else "Explorador", style = MaterialTheme.typography.labelSmall)
+                    Row(Modifier.fillMaxWidth().padding(horizontal = 20.dp), horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                        Column {
+                            Text("RICK AND MORTY", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+                            Text(if (sesion.rol == Rol.ADMIN) "Administrador" else "Explorador", style = MaterialTheme.typography.labelSmall)
+                        }
+                        TextButton(onClick = login::cerrarSesion) { Text("Cerrar sesión") }
+                    }
+                    Box(Modifier.weight(1f)) { CatalogoNav(container, sesion.rol) }
                 }
-                TextButton(onClick = login::cerrarSesion) { Text("Cerrar sesión") }
             }
-            Box(Modifier.weight(1f)) { CatalogoNav(container, sesion.rol) }
         }
     }
 }
