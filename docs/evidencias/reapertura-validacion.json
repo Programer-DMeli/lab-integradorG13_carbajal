@@ -1,0 +1,9 @@
+{
+  "sesion_usuario": true,
+  "sin_admin": true,
+  "personaje_visible": true,
+  "favorito_persistido": true,
+  "sincronizacion_sin_permiso": true,
+  "login_tras_cerrar_y_reabrir": true,
+  "sesion_cerrada": true
+}

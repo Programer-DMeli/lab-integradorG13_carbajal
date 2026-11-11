@@ -1,0 +1,6 @@
+
+com.carbajal.rickandmorty.RoomRepositoryTest:.....
+
+Time: 0.215
+
+OK (5 tests)

@@ -1,0 +1,16 @@
+[
+  {
+    "cuenta": "admin",
+    "login": true,
+    "rol": "admin",
+    "otroPerfilHttp": 403,
+    "escrituraRolHttp": 403
+  },
+  {
+    "cuenta": "usuario",
+    "login": true,
+    "rol": "usuario",
+    "otroPerfilHttp": 403,
+    "escrituraRolHttp": 403
+  }
+]

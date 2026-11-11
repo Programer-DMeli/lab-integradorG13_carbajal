@@ -9,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -30,10 +31,10 @@ fun LoginScreen(estado: UiState<Sesion?>, ingresar: (String, String) -> Unit, re
         Text("Explora personajes Alien y guarda tus favoritos.", Modifier.padding(top = 12.dp, bottom = 32.dp),
             color = MaterialTheme.colorScheme.onSurfaceVariant)
         OutlinedTextField(correo, { correo = it }, label = { Text("Correo electrónico") },
-            singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email), modifier = Modifier.fillMaxWidth())
+            singleLine = true, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email), modifier = Modifier.fillMaxWidth().testTag("correo"))
         Spacer(Modifier.height(12.dp))
         OutlinedTextField(clave, { clave = it }, label = { Text("Contraseña") }, singleLine = true,
-            visualTransformation = PasswordVisualTransformation(), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password), modifier = Modifier.fillMaxWidth())
+            visualTransformation = PasswordVisualTransformation(), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password), modifier = Modifier.fillMaxWidth().testTag("clave"))
         if (estado is UiState.Error) Text(estado.mensaje, Modifier.padding(top = 16.dp), color = MaterialTheme.colorScheme.error)
         Button(onClick = { ingresar(correo, clave); clave = "" }, modifier = Modifier.fillMaxWidth().padding(top = 24.dp).heightIn(min = 52.dp)) { Text("Entrar al portal") }
         TextButton(onClick = restaurar) { Text("Reintentar recuperar sesión") }

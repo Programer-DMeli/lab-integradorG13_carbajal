@@ -1,0 +1,45 @@
+{
+  "fecha": "2026-11-08",
+  "compilacionLimpia": true,
+  "unitarias": [
+    {
+      "name": "com.carbajal.rickandmorty.ExampleUnitTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.carbajal.rickandmorty.LoginViewModelTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.carbajal.rickandmorty.ListaViewModelTest",
+      "tests": "8",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    }
+  ],
+  "lint": {
+    "errores": 0,
+    "advertencias": 51
+  },
+  "roomEjecutadas": 5,
+  "roomPendientes": 0,
+  "recorridoCompleto": "aprobado en Medium_Phone; 1 prueba instrumentada",
+  "apkSha256": "b5816cad34aba8161f8f348adac05793b795d31c5919e677d0ce5a782ce978ce",
+  "permisoDenegadoReal": true,
+  "sesionPersistidaEntreProcesos": true,
+  "favoritoPersistidoEntreProcesos": true,
+  "aceptacionVerificada": 14,
+  "cierreSesionEntreProcesos": {
+    "pidCierre": 10236,
+    "pidReapertura": 10565,
+    "loginVisible": true
+  },
+  "pruebasSesionSeparadas": 2
+}

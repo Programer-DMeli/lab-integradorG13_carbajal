@@ -50,12 +50,44 @@ La lista de la API tiene envoltorio `info/results`. La sincronización recorre t
 
 Referencias: [API Rick and Morty](https://rickandmortyapi.com/documentation), [Room](https://developer.android.com/jetpack/androidx/releases/room), [Firebase Android](https://firebase.google.com/docs/android/setup).
 
-## Historial y asistencia de IA
-
-Se conservó el commit base existente y se implementaron H1–H16 en orden, con commits independientes por avance. El desarrollo asistido por Codex se documenta en `PROMPTS.md`; no se presenta como una fase realizada sin IA. La rama `mejora-ia` se destina a pruebas y correcciones posteriores.
-
-La autoría del historial es la cuenta Git configurada por la persona que realiza cada cambio. No se simulan aportes de un segundo integrante. El reparto y los datos del segundo integrante deben completarse con sus aportes reales.
 
 ## Validación y evidencias
 
-Los hitos H1–H15 compilaron antes de su commit. Firebase se configuró en la consola del proyecto existente. La fase siguiente incorpora las pruebas de ViewModel y persistencia, las capturas y el registro verificable de las 14 pruebas de aceptación. La compilación por sí sola no acredita esas pruebas funcionales.
+Los hitos H1–H15 compilaron antes de su commit. Los resultados, comandos y límites de la validación se detallan en [docs/VALIDACION.md](docs/VALIDACION.md). El registro de asistencia está en [PROMPTS.md](PROMPTS.md).
+
+```bash
+./gradlew :app:testDebugUnitTest :app:lintDebug
+./gradlew :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.carbajal.rickandmorty.RoomRepositoryTest
+```
+
+El método `CatalogoRealJourneyTest#recorridoConCuentasReales` se ejecuta por separado, suministrando `adminCorreo`, `adminClave`, `usuarioCorreo` y `usuarioClave` como argumentos de instrumentación. Las cuentas no forman parte de los fuentes. Se debe usar un emulador de pruebas: el recorrido alterna su conexión y limpia la caché de esta aplicación. Restaura la conexión al finalizar.
+
+Para verificar el cierre de sesión entre procesos, ejecutar `CatalogoRealJourneyTest#cerrarSesionAntesDeReabrirProceso` con la cuenta usuario sobre una app de prueba sin sesión y después `CatalogoRealJourneyTest#loginPersisteEnOtroProcesoTrasCerrarSesion` en otra invocación de instrumentación. La segunda prueba comprueba que el PID cambió y que aparece el login.
+
+Validación cerrada: 11 pruebas de ViewModel, 5 de Room, recorrido completo y las 14 pruebas de aceptación verificadas. Lint termina sin errores; las advertencias y el detalle están en el informe.
+
+## Capturas reales
+
+| Login | Catálogo |
+| --- | --- |
+| ![Login](docs/evidencias/login.png) | ![Catálogo](docs/evidencias/lista.png) |
+
+| Detalle | Favoritos |
+| --- | --- |
+| ![Detalle](docs/evidencias/detalle.png) | ![Favoritos](docs/evidencias/favoritos.png) |
+
+| Admin | Notificación |
+| --- | --- |
+| ![Admin](docs/evidencias/admin.png) | ![Notificación](docs/evidencias/notificacion.png) |
+
+![Catálogo sin conexión](docs/evidencias/sin-conexion.png)
+
+## Evidencias adicionales
+
+| Usuario sin Admin | Favorito después de reabrir |
+| --- | --- |
+| ![Usuario](docs/evidencias/usuario.png) | ![Reapertura](docs/evidencias/reapertura.png) |
+
+| Permiso de notificaciones denegado | Login tras cerrar sesión y reabrir |
+| --- | --- |
+| ![Permiso denegado](docs/evidencias/permiso-denegado.png) | ![Sesión cerrada](docs/evidencias/cierre-sesion-reapertura.png) |
